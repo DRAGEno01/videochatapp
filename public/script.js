@@ -13,7 +13,7 @@ myVideo.muted = true
 
 let myStream
 
-navigartor.mediaDevices
+navigator.mediaDevices
 .getUserMedia({
     audio:true,
     video:true,
