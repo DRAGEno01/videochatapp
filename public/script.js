@@ -22,28 +22,26 @@ navigator.mediaDevices
         myStream = stream;
         addVideoStream(myVideo, stream);
 
-        socket.on("user-connected",(userId)=>{
-            connectToNewUser(userId,stream)
-        })
+        socket.on("user-connected", (userId) => {
+            connectToNewUser(userId, stream);
+        });
 
-        peer.on("call",(call)=>{
+        peer.on("call", (call) => {
             call.answer(stream);
-            const video = document.createElement(video, userVideoStream)
-            call.on("stream",(userVideoStream)=>{
-                addVideoStream(video, userVideoStream)
-            })
-        })
+            const video = document.createElement("video");
+            call.on("stream", (userVideoStream) => {
+                addVideoStream(video, userVideoStream);
+            });
+        });
     })
 
-
-function connectToNewUser(uesrId, stream){
+function connectToNewUser(userId, stream) {
     const call = peer.call(userId, stream);
-    const video = document.getElementById("video")
-    call.on("stream",(userVideoStream)=>{
+    const video = document.createElement("video");
+    call.on("stream", (userVideoStream) => {
         addVideoStream(video, userVideoStream);
-    })
-}
-
+    });
+};
 
 function addVideoStream(video, stream) {
     video.srcObject = stream;
@@ -79,7 +77,6 @@ $(function () {
         }
     })
 
-
     $("#mute_button").click(function () {
         const enabled = myStream.getAudioTracks()[0].enabled;
         if (enabled) {
@@ -110,6 +107,27 @@ $(function () {
         }
     })
 
+    $("#invite_button").click(function () {
+        const to = prompt("Enter the email address")
+        let data = {
+            url: window.location.href,
+            to: to
+        }
+        $.ajax({
+            url: "/send-mail",
+            type: "post",
+            data: JSON.stringify(data),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                alert("Invite sent!")
+            },
+            error: function (result) {
+                console.log(result.responseJSON)
+            }
+        })
+    })
+
 })
 
 peer.on("open", (id) => {
@@ -125,4 +143,3 @@ socket.on("createMessage", (message, userName) => {
         </div>
     `)
 });
-
